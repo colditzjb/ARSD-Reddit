@@ -1,1 +1,3 @@
 My stuff is for the top 10 subreddits based on number of times they've posted there, number of times they've commented, and then the two of them combined.
+
+The other two folders were used for flask formatting (front-end stuff), so that may not be needed when combining all of the UI.

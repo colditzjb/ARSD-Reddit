@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" 
+    integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <title> User Dashboard</title>
+{% endblock%}
+    
+{% block body %}
+    
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 bg-light d-none d-md-block sidebar">
+            <div class="left-sidebar">
+                <h2>Top 10 Subreddits</h2>
+                <ol>
+                    <li><a href="/subreddit/stopdrinking">stopdrinking</a></li>
+                    <li><a href="/subreddit/serviceadvisors">serviceadvisors</a></li>
+                    <li><a href="/subreddit/crochet">crochet</a></li>
+                    <li><a href="/subreddit/datingover30">datingoverforty</a></li>
+                    <li><a href="/subreddit/Justrolledintotheshop">Justrolledintotheshop</a></li>
+                    <li><a href="/subreddit/OkCupid">OkCupid</a></li>
+                    <li><a href="/subreddit/antiwork">antiwork</a></li>
+                    <li><a href="/subreddit/arbedeenwa">arbedeenwa</a></li>
+                    <li><a href="/subreddit/FriendsOver40">FriendsOver40</a></li>
+                    <li><a href="/subreddit/farcry">farcry</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+
+    <h1> User Dashboard </h1>
+    <hr>
+
+    <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Top Subreddits based on Number of Upvoted Posts</h5>
+              <canvas id="upvoteSubreddits" width="300" height="300"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Two</h5>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Three</h5>
+              <p class="card-text">Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Four</h5>
+              <p class="card-text">Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Five</h5>
+              <p class="card-text">Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Six</h5>
+              <p class="card-text">Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+</main>
+{% endblock%}
+
+{% block scripts %}
+
+
+<script>
+    const ctx = document.getElementById('upvoteSubreddits').getContext('2d');
+const upvoteSubreddits= new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [
+            {% for item in range(10) %}
+                "{{ subreddits[item] }}",
+            {% endfor %}
+        ],
+        datasets: [{
+            label: '# of upvoted posts',
+            data: [
+                {% for item in range(10) %}
+                    {{ upvotes[item] }},
+                {% endfor %}
+            ],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

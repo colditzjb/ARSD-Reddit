@@ -2,13 +2,14 @@ from flask import Flask, render_template, request, url_for
 import praw, datetime
 from flask_sqlalchemy import SQLAlchemy
 import numpy as np
+import stats
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-#db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
 
 #Database Models
-'''
+
 class Subreddit(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -33,7 +34,7 @@ class Comment(db.Model):
     parent_post = db.Column(db.String(100), nullable=False)
     parent_sub = db.Column(db.String(100),nullable=False)
     body_text = db.Column(db.String(1000),nullable=False)
-    '''
+    
 
 reddit = praw.Reddit(client_id='lxxZ8MnuOIRjYHVORUBoww',
     client_secret='YgyBe6fKMiYl0_KZPuKuelNLcEMi9g',
@@ -145,7 +146,7 @@ def get_comments_in_subreddit(comment_history, subreddit):
 
 
 #---- Site Starts ----
-'''
+
 @app.before_first_request
 def populate_database():
     post_history = get_post_history(user)
@@ -159,7 +160,7 @@ def populate_database():
         new_comment = Comment(site_id =comment['id'], date_created =comment['created'], parent_post = comment['post'], parent_sub = comment['subreddit'], body_text = comment['body'])
         db.session.add(new_comment)
         db.session.commit()
-        '''
+        
 
 
 @app.route('/')
@@ -184,12 +185,16 @@ def home():
     li = list(sortedSubDict.keys())
     upvoteCounts = list(sortedSubDict.values())
 
-    return render_template('index.html',subreddits=li, upvotes=upvoteCounts) #add more parameters for new charts
+    jsdict = stats.postingActivityDay(reddit)
+    topSubs = stats.topTenSubreddits(reddit)
+    something = stats.averageCommentLengths(reddit) 
+
+    return render_template('index.html',subreddits=li, upvotes=upvoteCounts, jsdict=jsdict, topSubs = topSubs, something = something) #add more parameters for new charts
 
     #placeholder top 10 logic
     #return render_template('index.html')
 
-'''
+
 @app.route('/subreddit/<name>')
 def subreddit(name):
     #replace with database query
@@ -206,7 +211,7 @@ def subreddit(name):
     subscriber_count = sub_stats['subscriber_count']
 
     return render_template("subreddit.html", title = title, description = description, subscriber_count = subscriber_count, post_count = post_count, comment_count = comment_count)
-'''    
+  
 
 
 

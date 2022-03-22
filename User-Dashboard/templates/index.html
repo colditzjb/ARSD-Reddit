@@ -54,7 +54,7 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Two</h5>
-              
+              <p class="card-text">Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.</p>
             </div>
           </div>
         </div>
@@ -72,8 +72,8 @@
         <div class="col-sm-6">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Four</h5>
-              <p class="card-text">Donec nec justo eget felis facilisis fermentum. Aliquam porttitor mauris sit amet orci. Aenean dignissim pellentesque felis.</p>
+              <h5 class="card-title">Weekly Post Activity</h5>
+              <canvas id="myChart" width="300" height="300"></canvas>
             </div>
           </div>
         </div>
@@ -147,6 +147,60 @@ const upvoteSubreddits= new Chart(ctx, {
         }
     }
 });
+
+var dict = JSON.parse('{{  jsdict  | tojson | safe  }}')
+    var topSubs = JSON.parse('{{  topSubs  | tojson | safe  }}')
+    // var xValues = Object.keys(dict)
+    // var yValues = Object.values(dict)
+    dict = {
+        'Sunday': dict.Sunday,
+        'Monday': dict.Monday,
+        'Tuesday': dict.Tuesday,
+        'Wednesday': dict.Wednesday,
+        'Thursday': dict.Thursday,
+        'Friday': dict.Friday,
+        'Saturday': dict.Saturday
+
+    }
+    const labels = Object.keys(dict)
+
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'What days do I post the most?',
+      backgroundColor: 'rgb(255, 99, 132)',
+      borderColor: 'rgb(255, 99, 132)',
+      data: Object.values(dict),
+    }]
+  };
+
+  const config = {
+    type: 'bar',
+    data: data,
+    options: {
+
+    }
+  };
+
+  const myChart = new Chart(
+    document.getElementById('myChart'),
+    config
+  );
+
+const entries = Object.entries(topSubs)
+entries.sort(function(a, b){
+    if(a[1] < b[1]) { return 1; }
+    if(a[1] > b[1]) { return -1; }
+    return 0;
+})
+
+subsArray = []
+countsArray = []
+for (let i = 0; i < 10; i++) {
+  subsArray.push(entries[i][0]);
+  countsArray.push(entries[i][1]);
+}
+
 </script>
 
 {% endblock %}

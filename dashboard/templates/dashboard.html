@@ -1,0 +1,398 @@
+{% extends 'base.html' %}
+{% block title %}
+Dashboard
+{% endblock %}
+{% block head %}
+<head>
+  <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+{% endblock %}
+{% block body %}
+<body>
+  <main role="main" class="col-md-9 ml-sm-auto col-lg-12 px-4 mt-0 pt-1">
+    <hr>
+  
+    <div class="row">
+        <div class="col-sm-6">
+          <div class="card shadow p-2  mb-5 bg-white rounded">
+            <div class="card-body">
+                <h5 class="card-title">Top 10 Subreddits Based on Posts</h5>
+                <canvas id="postSubreddits"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card shadow p-2  mb-5 bg-white rounded">
+            <div class="card-body">
+              <h5 class="card-title">Upvotes by Subreddit (Click for more information.)</h5>
+              <canvas id="upvoteSubreddits"></canvas> 
+
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card shadow p-2  mb-5 bg-white rounded">
+            <div class="card-body">
+              <h5 class="card-title">Top 10 Subreddits Based on Comments</h5>
+              <canvas id="commentSubreddits"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card shadow p-2  mb-5 bg-white rounded">
+            <div class="card-body">
+              <h2 class="card-title">User Statistics</h2>
+				<hr>
+				<h4>Days since user registration:</h4>
+				
+				<font size="14" face="Courier New" >
+				<table>
+				<tr>
+					<td>{{totalDays}}</td>
+				</tr>
+				</table>
+				</font>
+				
+				<hr>
+				<h4>Number of active days:</h4>
+				<font size="14" face="Courier New" >
+				<table>
+				<tr>
+					<td>{{days}}</td>
+				</tr>
+				</table>
+				</font>
+				
+				<hr>
+				<h4>Number of activities per active day:</h4>
+				<font size="14" face="Courier New" >
+				<table>
+				<tr>
+					<td>{{post}}</td>
+				</tr>
+				</table>
+				</font>
+				
+				<hr>
+              <!-- <canvas id="myChart"></canvas> -->
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="card shadow p-2  mb-5 bg-white rounded">
+            <div class="card-body">
+              <h5 class="card-title d-flex justify-content-center">Main Recovery Subreddits</h5>
+              <ul>
+                {% for item in allRRSubreddits_List %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+              
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card shadow p-2  mb-5 bg-white rounded">
+            <div class="card-body flex-column">
+              <h5 class="card-title lead text-center">Recovery Subreddit Activity</h5>
+              <div>
+                <p class="" style="font-size: .8em;"><br>
+                  Most comments:&ensp;<strong>{{ maxStats[0][0] }}({{ maxStats[0][1] }})</strong><br>
+                  Most submissions:&ensp;<strong>{{ maxStats[1][0] }}({{ maxStats[1][1] }})</strong><br>
+                  Most upvoted submissions:&ensp;<strong>{{ maxStats[2][0] }}({{ maxStats[2][1] }})</strong><br>
+                </p>
+                <p class="card-text lead" style="font-size: .9em;"><strong>Best Comment ({{ bestComment['score'] }}): </strong></p>
+                <p class="card-text lead" style="font-size: .8em;">{{ bestComment['body'][0:200] }}</p>             
+                <p class="card-text lead" style="font-size: .9em;"><strong>Worst Comment ({{ worstComment['score'] }}): </strong></p>
+                <p class="card-text lead" style="font-size: .8em;">{{ worstComment['body'][0:200] }}</p>  
+                <br>
+                {% if weeklyComments %}
+                <p>naaa</p>
+                {% else %}
+                <p>You post most frequently on {{ mainRecoverySub }}, but you don't post at least once a week</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>    
+  </main>
+  <!-- comment stats section -->
+    <div class="container shadow p-2  mb-5 bg-white rounded px-4 m-4 mb-0">
+      <div class="card-body">
+        <div class="d-flex pb-0 mb-0 justify-content-center">
+          <div>
+            <h5 class="mb-0 pb-2"> Comment Statistics</h5>
+          </div>
+        
+        </div>
+        <div class="row d-flex justify-content-between">
+          <!-- first column row 1-->
+          <div class="d-flex flex-column mt-2" style="width: 70%;">
+              
+              
+              <p class="card-text lead" style="font-size: .9em;">Average comment length: &emsp;
+                <strong>{{ avgStats[0] }} characters (Median: {{ avgStats[1] }})</strong>
+              <br>Average comments on days engaged:&emsp;<strong>{{ daysEngaged }}  </strong></p> 
+              <p class="card-text lead" style="font-size: .9em;"><strong>Best Comment ({{ bestComment['score'] }}): </strong></p>
+              <p class="card-text lead" style="font-size: .8em;">{{ bestComment['body'][0:200] }}</p>             
+              <p class="card-text lead" style="font-size: .9em;"><strong>Worst Comment ({{ worstComment['score'] }}): </strong></p>
+              <p class="card-text lead" style="font-size: .8em;">{{ worstComment['body'][0:200] }}</p>             
+          </div>
+          <!-- second column row 1-->
+          <div class="d-flex flex-column mt-2 justify-content-center" style="width: 30%;">
+            <p class="lead align-self-center pb-0 mb-0" style="font-size: .9em;">Comments by Subreddit</p>
+              <canvas class="pchart p-4" id="pieChart1" style="max-width: 100%; width: 100%; height: 100%;"></canvas>
+                      
+          </div>
+            <div class="d-flex border border-5 rounded justify-content-center" style="width: 100%;">
+              <div style="width: 50%;">
+                <div class="row-md mt-5 pt-5 pe-4" style="max-width: 100%;">
+                  <div id="wordCloud"></div>
+                </div>
+              </div>
+              <div class=" d-flex flex-column" style="height: 14em; max-width: 50%;
+              width: 50%;">
+              <h6 class="card-title lead align-self-center">Comment Frequency (Past 90 Days)</h6>
+              <canvas id="myChart" style=" max-height: 100%;"></canvas>  
+            </div>
+          </div>
+          
+        </div>
+          
+        </div>
+      </div>
+    </div>
+  </body>
+{% endblock %}
+{% block scripts %}
+<!-- Import javascript functions (should be able to add to existing route)-->
+
+<script type="text/javascript"
+         src="{{ url_for('static', filename='jQWCloudv3.4.1.js') }}"></script>
+<script type="text/javascript"
+         src="{{ url_for('static', filename='dashb.js') }}"></script>
+
+
+<script type=text/javascript>
+    var dict = JSON.parse('{{  jsdict  | tojson | safe  }}')
+    setupCommentsDays(dict)
+    var topSubs = JSON.parse('{{  topSubs[0]  | tojson | safe  }}')
+    setupSubPieChart(topSubs)
+    //clearly you dont need to use json.parse. I used the python Json package to send the dict as json.
+    var cloudData = {{  cloudData  | safe  }}
+    data = []
+    val = 0
+    colorVar = ''
+    for (const [key, value] of Object.entries(cloudData)) {
+      // console.log(key, value);
+      val = val + 1
+      switch(val%4) {
+          case 1:
+            colorVar = 'rgba(60, 145, 230, 1)'
+            break;
+          case 2:
+            colorVar = 'rgba(240, 93, 35, 1)'
+            break;
+          case 3:
+            colorVar = 'rgba(52, 46, 55, 1)'
+            break;
+          case 0:
+            colorVar = 'rgba(46, 71, 86, 1)'
+            break;
+      }
+      data.push({word: key, weight: value, color: colorVar})
+    }
+    makeCloud(data)
+</script>
+
+<script>
+const canvas = document.getElementById('upvoteSubreddits');
+const ctx = canvas.getContext('2d');
+const config = {
+type: 'bar',
+data: {
+    labels: [
+        {% for item in range(10) %}
+            "{{ li[item] }}",
+        {% endfor %}
+    ],
+    datasets: [{
+        label: '# of upvoted posts',
+        data: [
+            {% for item in range(10) %}
+                { subnames: '{{ li[item] }}', counts: {{ upvoteCounts[item] }}, links: "/subreddit/{{ li[item] }}"}, // format as 1 dictionary
+            {% endfor %}
+        ],
+        backgroundColor: [
+            'rgba(60, 145, 230, 1)',
+            'rgba(52, 46, 55, 1)',   
+            'rgba(240, 93, 35, 1)',
+            'rgba(46, 71, 86, 1)'
+        ],
+        borderColor: [
+            'rgba(60, 145, 230, 1)',
+            'rgba(52, 46, 55, 1)',
+            'rgba(240, 93, 35, 1)',
+            'rgba(46, 71, 86, 1)'
+        ],
+        borderWidth: 1
+    }]
+},
+options: {
+    parsing: {
+      xAxisKey: 'subnames',
+      yAxisKey: 'counts'
+    },
+    scales: {
+        y: {
+            beginAtZero: true
+        }
+    }
+}
+};
+
+const upvoteSubreddits= new Chart(ctx,  config);
+
+//Makes barchart clickable
+function clickHandler(click){
+  const points = upvoteSubreddits.getElementsAtEventForMode(click, 'nearest', {intersect: true}, true);
+  if (points.length) {
+    const firstPoint = points[0];
+    const value = upvoteSubreddits.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+    console.log(value.links)
+    window.open(value.links);
+  }
+}
+canvas.onclick = clickHandler;
+
+</script>
+<script>
+  const post_canvas = document.getElementById('postSubreddits');
+  const post_ctx = post_canvas.getContext('2d');
+  const post_config = {
+  type: 'bar',
+  data: {
+      labels: [
+          {% for item in range(10) %}
+              "{{ postKeys[item] }}",
+          {% endfor %}
+      ],
+      datasets: [{
+          label: '# of posts',
+          data: [
+              {% for item in range(10) %}
+                  { post_subnames: '{{ postKeys[item] }}', post_counts: '{{ postValues[item] }}', links: "/subreddit/{{ postKeys[item] }}"}, // format as 1 dictionary
+              {% endfor %}
+          ],
+          backgroundColor: [
+              'rgba(60, 145, 230, 1)',
+              'rgba(52, 46, 55, 1)',   
+              'rgba(240, 93, 35, 1)',
+              'rgba(46, 71, 86, 1)'
+          ],
+          borderColor: [
+              'rgba(60, 145, 230, 1)',
+              'rgba(52, 46, 55, 1)',
+              'rgba(240, 93, 35, 1)',
+              'rgba(46, 71, 86, 1)'
+          ],
+          borderWidth: 1
+      }]
+  },
+  options: {
+      parsing: {
+        xAxisKey: 'post_subnames',
+        yAxisKey: 'post_counts'
+      },
+      scales: {
+          y: {
+              beginAtZero: true
+          }
+      }
+  }
+  };
+  
+  const postSubreddits= new Chart(post_ctx,  post_config);
+  
+  //Makes barchart clickable
+  function clickPostHandler(click){
+    const points = postSubreddits.getElementsAtEventForMode(click, 'nearest', {intersect: true}, true);
+    if (points.length) {
+      const firstPoint = points[0];
+      const value = postSubreddits.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+      console.log(value.links)
+      window.open(value.links);
+    }
+  }
+  post_canvas.onclick = clickPostHandler;
+</script>
+
+<script>
+  const comment_canvas = document.getElementById('commentSubreddits');
+  const comment_ctx = comment_canvas.getContext('2d');
+  const comment_config = {
+  type: 'bar',
+  data: {
+      labels: [
+          {% for item in range(10) %}
+              "{{ commentKeys[item] }}",
+          {% endfor %}
+      ],
+      datasets: [{
+          label: '# of comments',
+          data: [
+              {% for item in range(10) %}
+                  { comment_subnames: '{{ commentKeys[item] }}', comment_counts: '{{ commentValues[item] }}', links: "/subreddit/{{ commentKeys[item] }}"}, // format as 1 dictionary
+              {% endfor %}
+          ],
+          backgroundColor: [
+              'rgba(60, 145, 230, 1)',
+              'rgba(52, 46, 55, 1)',   
+              'rgba(240, 93, 35, 1)',
+              'rgba(46, 71, 86, 1)'
+          ],
+          borderColor: [
+              'rgba(60, 145, 230, 1)',
+              'rgba(52, 46, 55, 1)',
+              'rgba(240, 93, 35, 1)',
+              'rgba(46, 71, 86, 1)'
+          ],
+          borderWidth: 1
+      }]
+  },
+  options: {
+      parsing: {
+        xAxisKey: 'comment_subnames',
+        yAxisKey: 'comment_counts'
+      },
+      scales: {
+          y: {
+              beginAtZero: true
+          }
+      }
+  }
+  };
+  
+  const commentSubreddits= new Chart(comment_ctx,  comment_config);
+  
+  //Makes barchart clickable
+  function clickCommentHandler(click){
+    const points = commentSubreddits.getElementsAtEventForMode(click, 'nearest', {intersect: true}, true);
+    if (points.length) {
+      const firstPoint = points[0];
+      const value = commentSubreddits.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+      console.log(value.links)
+      window.open(value.links);
+    }
+  }
+  comment_canvas.onclick = clickCommentHandler;
+</script>
+
+{% endblock %}

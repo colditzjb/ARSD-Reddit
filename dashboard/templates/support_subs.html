@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}
+Support Subreddits
+{% endblock %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<div class="container bg-light rounded border mt-5 p-3">
+    {% for key, value in subsDict.items() %}
+    <div class="row">
+        <div class="col-md-3">
+            <strong>
+                <p>
+                    {{ key }}
+                </p>
+            </strong>
+        </div>
+        <div class="col-md-9">
+            <p>
+                {{ value }}
+            </p>
+        </div>
+    </div>
+    <hr/>
+    {% endfor %}
+</div>
+{% endblock %}

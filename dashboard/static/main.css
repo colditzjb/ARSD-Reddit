@@ -1,0 +1,93 @@
+@media (max-width: 1200px) {
+
+}
+
+.dumblist {
+    padding-left: 2;
+}
+body{
+    background-color: rgb(255, 255, 255);
+    color: rgb(52, 46, 55);
+}
+
+/* Navigation */
+
+nav{
+    background-color: #3C91E6;
+    z-index: 9999;
+}
+.titleSpan{
+    color: rgb(255, 255, 255);
+}
+main {
+    padding-top: 30px;
+}
+main .card {
+    margin-bottom: 20px;
+    height: 525px;
+}
+.vr{
+    height: 2.7em;
+    color: orange;
+    width: 2px;
+}
+body {
+    background-color: #dbebfa;
+}
+
+/* Loading Spinner Section */
+div#loading {
+    display: none;
+    cursor: wait;
+}
+.spinner{
+    position: fixed; /* or absolute */
+    top: 35%;
+    left: 45%;
+    width: 100px;
+    height: 100px;
+}
+.spinner div{
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 8px solid transparent;
+    border-top-color: #3C91E6;
+    border-radius: 50%;
+    animation: spinnerOne 1.2s linear infinite
+}
+.spinner div:nth-child(2) {
+    border: 8px solid transparent;
+    border-bottom-color: #3C91E6;
+    border-radius: 50%;
+    animation: spinnerTwo 1.2s linear infinite;
+}
+@keyframes spinnerOne{
+    0%{transform: rotate(0deg); border-width: 10px;}
+    50%{transform: rotate(180deg); border-width: 1px;}
+    100%{transform: rotate(360deg); border-width: 10px;}
+}
+@keyframes spinnerTwo{
+    0%{transform: rotate(0deg); border-width: 1px;}
+    50%{transform: rotate(180deg); border-width: 10px;}
+    100%{transform: rotate(360deg); border-width: 1px;}
+}
+/* End of Loading Spinner Section */
+ 
+/* Pie charts */
+.pchart {
+    /* padding: 0;
+    margin: auto;
+    display: block; */
+    height: 100px;
+}
+
+.pchart-container {
+    /* position: relative;  */
+    /* height:70%; 
+    width:70%;  */
+    height: 100px;
+    margin-top: 40px;
+}
+   
